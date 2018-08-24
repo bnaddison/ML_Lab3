@@ -62,19 +62,6 @@ float getAverage(int component) {
   return avg;
 }
 
-float var (int component) {
-  float sum = 0;
-
-  for (int i = 0; i < data.size(); i++) {
-    sum += pow(data[i].second[component] - getAverage(component), 2);
-  }
-
-  float result = sum/(data.size()-1);
-
-  return result;
-
-}
-
 float covar (int c1, int c2) {
   float sum = 0;
 
@@ -92,12 +79,22 @@ float covar (int c1, int c2) {
 int main () {
 
   readfile ("2018-AvgRainfall_mm_.txt");
-  cout << var(0) << " " << var(1) << " " << covar(0,1) << " " << covar(1,0) << endl;
-/*
-  for (int i = 0; i < data.size(); i++) {
-    cout << data[i].first << " " << data[i].second[0] << " " << data[i].second[1] << endl;
-  } */
-  //cout << places << xVar << yVar << obs << obs_total<< endl;
 
-return 0;
+  Matrix<float, 2, 2> covarMatrix;
+
+  covarMatrix(0,0) = covar(0,0);
+  covarMatrix(0,1) = covar(0,1);
+  covarMatrix(1,0) = covar(1,0);
+  covarMatrix(1,1) = covar(1,1);
+
+  EigenSolver<Matrix<float,2,2>> eigen(covarMatrix);
+  cout << "Component 1 Variance: " << covar(0,0) << endl;
+  cout << "Component 2 Variance: " << covar(1,1) << endl;
+  cout << "Total Variance: " << covar(0,0) + covar(1,1) << endl << endl;
+  cout << "Covariance Matrix:" << endl << "| " << covar(0,0) << ", " << covar(0,1) << " |" << endl << "| " << covar(1,0) << ", " << covar(1,1) << " |" << endl << endl;
+  cout << "Eigenvalues:" << endl << eigen.eigenvalues().real() << endl << endl;
+	cout << "Eigenvectors:" << endl << eigen.eigenvectors().real() << endl << endl;
+
+
+  return 0;
 }
